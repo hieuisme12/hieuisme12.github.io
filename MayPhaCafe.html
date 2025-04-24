@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Máy Pha Cà Phê</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="MayPhaCafe.css">
+</head>
+
+<body onload="checkLoginStatus(); updateCartCount();">
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">LTHSHOP</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <form class="d-flex ms-auto me-3" role="search" onsubmit="searchProduct(event)">
+                <input class="form-control me-2 custom-search-input" type="search" placeholder="Tìm kiếm sản phẩm" aria-label="Search" id="search-input">
+                <button class="btn btn-outline-light custom-search-button" type="submit">Tìm kiếm</button>
+            </form>
+            <div class="d-flex align-items-center">
+                <a href="GioHang.html" class="btn btn-outline-light position-relative me-3">
+                    🛒 Giỏ hàng <span id="cart-count" class="badge bg-danger position-absolute top-0 start-100 translate-middle">0</span>
+                </a>
+                <div id="auth-buttons"></div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h2 class="text-center">Danh Mục Máy Pha Cà Phê</h2>
+
+        <div class="d-flex justify-content-between mt-3">
+            <button class="btn btn-danger flex-fill mx-2" onclick="filterProducts('espresso')">Máy pha Espresso</button>
+            <button class="btn btn-danger flex-fill mx-2" onclick="filterProducts('capsule')">Máy pha Capsule</button>
+            <button class="btn btn-danger flex-fill mx-2" onclick="filterProducts('drip')">Máy pha Drip</button>
+            <button class="btn btn-dark flex-fill mx-2" onclick="filterProducts('all')">Tất cả</button>
+        </div>
+
+        <div id="product-list" class="row mt-4 g-4"></div>
+        <div class="text-center mt-4">
+            <a href="index.html" class="btn btn-primary">Quay về Trang Chủ</a>
+        </div>
+    </div>
+
+    <script src="data/dataCf.js"></script>
+    <script>
+        function checkLoginStatus() {
+            const authButtons = document.getElementById("auth-buttons");
+            const storedUser = localStorage.getItem("loggedInUser");
+            if (storedUser) {
+                const userData = JSON.parse(storedUser);
+                authButtons.innerHTML = `
+                    <div class="dropdown">
+                        <img src="image/avt.jpg" alt="Avatar" class="rounded-circle" width="50" height="50" data-bs-toggle="dropdown">
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#">Tài khoản của tôi</a></li>
+                            <li><a class="dropdown-item text-danger" href="#" onclick="logout()">Đăng xuất</a></li>
+                        </ul>
+                    </div>`;
+            } else {
+                authButtons.innerHTML = `
+                    <a href="DangNhap.html" class="btn btn-outline-light me-2">Đăng nhập</a>
+                    <a href="DangKi.html" class="btn btn-light">Đăng ký</a>`;
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem("loggedInUser");
+            window.location.reload();
+        }
+
+        function displayProducts(products) {
+            const productList = document.getElementById("product-list");
+            productList.innerHTML = "";
+            products.forEach(product => {
+                productList.innerHTML += `
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="${product.img}" class="card-img-top" alt="${product.name}" width="500" height="500" style="object-fit: cover; margin: auto; padding-top: 10px;">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">${product.name}</h5>
+                        <p class="card-text">Giá: ${product.price}</p>
+                        <button class="btn btn-success" onclick="addToCart('${product.name}', '${product.price}', '${product.img}')">Thêm vào giỏ hàng</button>
+                    </div>
+                </div>
+            </div>`;
+            });
+        }
+
+
+        function addToCart(name, price, img) {
+            const storedUser = localStorage.getItem("loggedInUser");
+
+            if (!storedUser) {
+                alert("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!");
+                return; // Không cho thêm nếu chưa đăng nhập
+            }
+
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            let existingProduct = cart.find(item => item.name === name);
+            if (existingProduct) {
+                existingProduct.quantity += 1;
+            } else {
+                cart.push({
+                    name,
+                    price,
+                    img,
+                    quantity: 1
+                });
+            }
+            localStorage.setItem("cart", JSON.stringify(cart));
+            updateCartCount();
+            alert("Đã thêm vào giỏ hàng!");
+        }
+
+        function updateCartCount() {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            let totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById("cart-count").innerText = totalCount;
+        }
+
+        function filterProducts(category) {
+            if (category === 'all') {
+                displayProducts(Object.values(dataCf).flat());
+            } else {
+                displayProducts(dataCf[category] || []);
+            }
+        }
+
+        function searchProduct(event) {
+            event.preventDefault(); // Ngăn reload trang
+            const keyword = document.getElementById("search-input").value.trim().toLowerCase();
+
+            if (!keyword) {
+                filterProducts('all');
+                return;
+            }
+
+            const allProducts = Object.values(dataCf).flat();
+            const filtered = allProducts.filter(p => p.name.toLowerCase().includes(keyword));
+
+            if (filtered.length > 0) {
+                displayProducts(filtered);
+            } else {
+                document.getElementById("product-list").innerHTML = `<p class="text-center">Không tìm thấy sản phẩm nào phù hợp.</p>`;
+            }
+        }
+        filterProducts('all');
+        updateCartCount();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Trang Bán Hàng Của Hiếu</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="HomePage.css">
+    <script src="data/dataCom.js"></script>
+    <script src="data/dataCf.js"></script>
+    <script src="data/dataFan.js"></script>
+    <script src="data/dataHutBui.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">LTHSHOP</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <form class="d-flex ms-auto me-3" role="search" onsubmit="searchProducts(event)">
+                <input class="form-control me-2 custom-search-input" type="search" id="search-input" placeholder="Tìm kiếm sản phẩm" aria-label="Search">
+                <button class="btn btn-outline-light custom-search-button" type="submit">Tìm kiếm</button>
+            </form>
+            <a href="GioHang.html" class="btn btn-warning">
+                🛒 Giỏ hàng (<span id="cart-count">0</span>)
+            </a>
+            <div id="auth-buttons" class="d-flex"></div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <aside class="col-lg-3 col-md-4 col-sm-12">
+                <h4>Đồ Gia Dụng</h4>
+                <ul class="category-list">
+                    <li><a href="NoiComDien.html">Nồi cơm điện</a></li>
+                    <li><a href="MayPhaCafe.html">Máy pha cà phê</a></li>
+                    <li><a href="QuatMayLamMat.html">Quạt, Máy làm mát</a></li>
+                    <li><a href="MayHutBui.html">Máy hút bụi</a></li>
+                </ul>
+            </aside>
+
+            <section class="col-lg-9 col-md-8 col-sm-12">
+                <div class="banner text-center">
+                    Khuyến mãi lên đến 50% - Mua 1 tặng 1
+                    <br>
+                </div>
+                <div id="product-list" class="row"></div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        function checkLoginStatus() {
+            const authButtons = document.getElementById("auth-buttons");
+            const storedUser = localStorage.getItem("loggedInUser");
+
+            if (storedUser) {
+                const userData = JSON.parse(storedUser);
+
+                authButtons.innerHTML = `
+            <div class="dropdown">
+                <img src="image/avt.jpg" alt="Avatar" class="rounded-circle" width="60" height="60" role="button" data-bs-toggle="dropdown">
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#"">Tài khoản của tôi</a></li>
+                    <li><a class="dropdown-item text-danger" href="#" onclick="logout()">Đăng xuất</a></li>
+                </ul>
+            </div>
+        `;
+            } else {
+                authButtons.innerHTML = `
+            <a href="DangNhap.html" class="btn btn-outline-light me-2">Đăng nhập</a>
+            <a href="DangKi.html" class="btn btn-light">Đăng ký</a>
+        `;
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem("loggedInUser");
+            window.location.reload();
+        }
+
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem("cart")) || [];
+            document.getElementById("cart-count").innerText = cart.length;
+        }
+
+        function loadProducts() {
+            const container = document.getElementById("product-list");
+            let html = "";
+            let allProducts = [];
+
+            function collectProducts(data) {
+                for (const category in data) {
+                    allProducts = allProducts.concat(data[category]);
+                }
+            }
+
+            // Gộp dữ liệu từ các nguồn
+            collectProducts(dataCom);
+            collectProducts(dataCf);
+            collectProducts(dataFan);
+
+            // Trộn ngẫu nhiên và lấy 6 sản phẩm
+            const shuffled = allProducts.sort(() => 0.5 - Math.random());
+            const selected = shuffled.slice(0, 6);
+
+            // Render ra HTML
+            selected.forEach(p => {
+                html += `
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <img src="${p.img}" class="card-img-top" alt="${p.name}">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">${p.name}</h5>
+                    <p class="card-text text-danger fw-bold">${p.price}</p>
+                    <button class="btn btn-primary mt-auto" onclick="addToCart('${p.name}', '${p.price}', '${p.img}')">Thêm vào giỏ hàng</button>
+                </div>
+            </div>
+        </div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+
+        function addToCart(name, price, image) {
+            const storedUser = localStorage.getItem("loggedInUser");
+
+            if (!storedUser) {
+                alert("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!");
+                // Hoặc chuyển hướng tự động:
+                // window.location.href = "DangNhap.html";
+                return;
+            }
+
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            let product = cart.find(item => item.name === name);
+
+            if (product) {
+                product.quantity += 1;
+            } else {
+                cart.push({
+                    name,
+                    price,
+                    image,
+                    quantity: 1
+                });
+            }
+
+            localStorage.setItem("cart", JSON.stringify(cart));
+            updateCartCount();
+            alert("Đã thêm vào giỏ hàng!");
+        }
+
+        checkLoginStatus();
+        updateCartCount();
+
+        window.addEventListener('load', () => {
+            loadProducts();
+        });
+        // Hàm tìm kiếm sản phẩm
+        function searchProducts(event) {
+            event.preventDefault(); // Ngăn chặn form gửi đi
+
+            const searchQuery = document.getElementById('search-input').value.toLowerCase(); // Lấy từ khóa tìm kiếm
+
+            // Gộp tất cả sản phẩm từ các nguồn dữ liệu
+            const allProducts = [
+                ...Object.values(dataCf).flat(),
+                ...Object.values(dataCom).flat(),
+                ...Object.values(dataFan).flat(),
+                ...Object.values(dataHutBui).flat()
+            ];
+
+            // Lọc sản phẩm theo tên
+            const filteredProducts = allProducts.filter(product => product.name.toLowerCase().includes(searchQuery));
+
+            // Hiển thị kết quả
+            displayProducts(filteredProducts);
+        }
+
+        // Hàm hiển thị sản phẩm
+        function displayProducts(products) {
+            const container = document.getElementById('product-list');
+            let html = "";
+
+            // Nếu không có sản phẩm nào tìm thấy
+            if (products.length === 0) {
+                html = "<p>Không có sản phẩm nào phù hợp với tìm kiếm của bạn.</p>";
+            } else {
+                // Hiển thị các sản phẩm tìm thấy
+                products.forEach(p => {
+                    html += `
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <img src="${p.img}" class="card-img-top" alt="${p.name}">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">${p.name}</h5>
+                            <p class="card-text text-danger fw-bold">${p.price}</p>
+                            <button class="btn btn-primary mt-auto" onclick="addToCart('${p.name}', '${p.price}', '${p.img}')">Thêm vào giỏ hàng</button>
+                        </div>
+                    </div>
+                </div>`;
+                });
+            }
+
+            container.innerHTML = html;
+        }
+
+        // Hàm thêm sản phẩm vào giỏ hàng
+        function addToCart(name, price, img) {
+            const storedUser = localStorage.getItem("loggedInUser");
+
+            if (!storedUser) {
+                alert("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!");
+                return;
+            }
+
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            let product = cart.find(item => item.name === name);
+
+            if (product) {
+                product.quantity += 1;
+            } else {
+                cart.push({
+                    name,
+                    price,
+                    img,
+                    quantity: 1
+                });
+            }
+
+            localStorage.setItem("cart", JSON.stringify(cart));
+            updateCartCount();
+            alert("Đã thêm vào giỏ hàng!");
+        }
+
+        function showUserInfo() {
+            const userData = JSON.parse(localStorage.getItem("loggedInUser"));
+            const popup = document.getElementById("user-info-popup");
+            const details = document.getElementById("user-details");
+
+            if (!userData.name || !userData.phone || !userData.address) {
+                details.innerHTML = `<p>Bạn chưa cập nhật đầy đủ thông tin cá nhân!</p>`;
+            } else {
+                details.innerHTML = `
+            <p><strong>Họ tên:</strong> ${userData.name}</p>
+            <p><strong>Số điện thoại:</strong> ${userData.phone}</p>
+            <p><strong>Địa chỉ:</strong> ${userData.address}</p>
+        `;
+            }
+
+            popup.classList.remove("d-none");
+        }
+
+        function closePopup() {
+            document.getElementById("user-info-popup").classList.add("d-none");
+        }
+
+        function updateUserInfo() {
+            const name = prompt("Nhập họ tên:");
+            const phone = prompt("Nhập số điện thoại:");
+            const address = prompt("Nhập địa chỉ:");
+
+            let userData = JSON.parse(localStorage.getItem("loggedInUser")) || {};
+            userData.name = name;
+            userData.phone = phone;
+            userData.address = address;
+
+            localStorage.setItem("loggedInUser", JSON.stringify(userData));
+            alert("Đã cập nhật thông tin cá nhân!");
+            showUserInfo(); // Hiển thị lại thông tin mới
+        }
+
+        function saveUserInfo(event) {
+            event.preventDefault();
+            const fullName = document.getElementById("fullName").value;
+            const phone = document.getElementById("phone").value;
+            const address = document.getElementById("address").value;
+
+            let storedUser = JSON.parse(localStorage.getItem("loggedInUser"));
+            storedUser.fullName = fullName;
+            storedUser.phone = phone;
+            storedUser.address = address;
+
+            localStorage.setItem("loggedInUser", JSON.stringify(storedUser));
+            alert("Cập nhật thông tin thành công!");
+            showUserInfo(); // Cập nhật lại box hiển thị
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+<footer class="bg-light text-dark py-4">
+    <div class="container">
+        <div class="row d-flex align-items-center justify-content-between">
+            <!-- Cột 1: Tổng đài hỗ trợ -->
+            <div class="col-md-2 col-6 mb-3">
+                <h6 class="fw-bold">Tổng đài hỗ trợ</h6>
+                <p><i class="bi bi-telephone-fill text-danger"></i>Trường ĐH Công Nghiệp</p>
+                <p><strong>Bảo hành:</strong> 0842797825</p>
+                <p><strong>Chat Zalo</strong> <img src="image/zalo-icon.png" alt="Zalo" width="30"></p>
+            </div>
+
+            <!-- Cột 2: Hỗ trợ khách hàng -->
+            <div class="col-md-2 col-4 mb-3">
+                <h6 class="fw-bold">Hỗ trợ khách hàng</h6>
+                <ul class="list-unstyled">
+                    <li><a href="#">Chính sách và Quy định</a></li>
+                    <li><a href="#">Hướng dẫn thanh toán</a></li>
+                    <li><a href="#">Đổi - Trả hàng hóa</a></li>
+                    <li><a href="#">Chính sách Bảo hành</a></li>
+                </ul>
+            </div>
+
+            <!-- Cột 3: Quản lý tài khoản -->
+            <div class="col-md-2 col-4 mb-3">
+                <h6 class="fw-bold">Quản lý tài khoản</h6>
+                <ul class="list-unstyled">
+                    <li><a href="#">Thay đổi thông tin</a></li>
+                    <li><a href="#">Lấy lại mật khẩu</a></li>
+                    <li><a href="#">Tra cứu đơn hàng</a></li>
+                    <li><a href="#">Quản lý giỏ hàng</a></li>
+                </ul>
+            </div>
+
+            <!-- Cột 4: Về LTHSHOP.vn -->
+            <div class="col-md-2 col-4 mb-3">
+                <h6 class="fw-bold">Về LTHSHOP.vn</h6>
+                <ul class="list-unstyled">
+                    <li><a href="#">Giới thiệu</a></li>
+                    <li><a href="#">Liên hệ</a></li>
+                    <li><a href="#">Tuyển dụng</a></li>
+                    <li><a href="#">Sơ đồ website</a></li>
+                </ul>
+            </div>
+            <!-- Cột 4: Về LTHSHOP.vn -->
+            <div class="col-md-2 col-4 mb-3">
+                <h6 class="fw-bold">Bài tập lớn môn Web</h6>
+                <ul class="list-unstyled">
+                    <li>Họ và tên : Lâm Trung Hiếu</li>
+                    <li>MSSV : 21112581</li>
+                    <li>Thầy/cô : Đặng Văn Thuận</li>
+                    <li>Mã lớp : 422000239906</li>
+                </ul>
+            </div>
+
+            <!-- Cột 5: Kết nối với chúng tôi -->
+            <div class="col-md-4 col-2 mb-3">
+                <h6 class="fw-bold">Kết nối với chúng tôi</h6>
+                <div class="d-flex gap-3">
+                    <a href="https://zalo.me/0842797825"><img src="image/zalo-icon.png" alt="Zalo" width="30"> Zalo</a>
+                    <a href="https://www.facebook.com/h.nopainess/"><img src="image/facebook-icon.jpg" alt="Facebook" width="20"> Facebook</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+</html>

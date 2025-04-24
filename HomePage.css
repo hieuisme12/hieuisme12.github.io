@@ -1,0 +1,253 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+}
+
+.navbar {
+    background-color: #dc3545;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+.navbar-brand {
+    color: white;
+    font-weight: bold;
+}
+
+.navbar-toggler {
+    border-color: white;
+}
+
+.container {
+    margin-top: 20px;
+}
+
+.category-list {
+    list-style: none;
+    padding: 0;
+}
+
+.category-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.category-list a {
+    text-decoration: none;
+    color: #000;
+}
+
+.banner {
+    background: #ffc107;
+    padding: 15px;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.card {
+    margin-bottom: 20px;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    border-radius: 25px;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background: white;
+}
+
+.search-box .form-control {
+    flex: 1;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 25px 0 0 25px;
+    outline: none;
+}
+
+.search-box .btn.btn-light {
+    background-color: white;
+    color: #dc3545;
+    border: 2px solid #dc3545;
+    /* Thêm viền cho đồng bộ */
+    padding: 10px 20px;
+    /* Giống với auth-buttons */
+    font-weight: bold;
+    border-radius: 25px;
+    transition: all 0.3s ease-in-out;
+}
+
+.search-box .btn.btn-light:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+.navbar .auth-buttons {
+    display: flex;
+    gap: 10px;
+    margin-left: auto;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.navbar .auth-buttons .btn.btn-outline-light {
+    border: 2px solid white;
+    color: white;
+    background: transparent;
+    padding: 8px 20px;
+    font-weight: bold;
+    border-radius: 25px;
+    transition: all 0.3s ease-in-out;
+}
+
+.navbar .auth-buttons .btn.btn-outline-light:hover {
+    background-color: white;
+    color: #dc3545;
+}
+
+.navbar .auth-buttons .btn.btn-light {
+    background-color: white;
+    color: #dc3545;
+    border: 2px solid #dc3545;
+    padding: 8px 20px;
+    font-weight: bold;
+    border-radius: 25px;
+    transition: all 0.3s ease-in-out;
+}
+
+.navbar .auth-buttons .btn.btn-light:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .navbar-collapse {
+        text-align: center;
+    }
+    .category-list {
+        text-align: center;
+    }
+    .navbar .auth-buttons {
+        flex-direction: column;
+        align-items: center;
+        margin-top: 10px;
+        position: static;
+        transform: none;
+    }
+    .search-box {
+        max-width: 250px;
+        /* Giảm kích thước thanh tìm kiếm */
+        height: 35px;
+        /* Điều chỉnh chiều cao */
+    }
+    .search-box .form-control {
+        padding: 5px 10px;
+        /* Giảm padding */
+        font-size: 14px;
+        /* Giảm cỡ chữ */
+        height: 15px;
+        /* Đảm bảo chiều cao khớp với ô tìm kiếm */
+    }
+    .popup-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1050;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .popup-content {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 400px;
+        text-align: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+    .search-box .btn.btn-light {
+        padding: 5px 10px;
+        /* Giảm padding */
+        font-size: 14px;
+        /* Giảm cỡ chữ */
+        height: 35px;
+        /* Điều chỉnh chiều cao */
+    }
+    .custom-search-input {
+        height: 38px;
+        /* Cùng chiều cao với nút */
+        border-radius: 0.375rem;
+        /* Bo góc nhẹ giống nút */
+    }
+    .custom-search-button {
+        height: 38px;
+        /* Bằng chiều cao nút */
+        border-radius: 0.375rem;
+        padding: 0 15px;
+        /* Thu gọn lại */
+    }
+    .card-img-top {
+        width: 100%;
+        height: 200px;
+        /* Cố định chiều cao */
+        object-fit: contain;
+        /* Đảm bảo không bị méo, giữ tỷ lệ */
+        padding: 10px;
+        background-color: #f8f9fa;
+        /* Nền trung tính để không bị xấu nếu ảnh nhỏ */
+        border-bottom: 1px solid #ddd;
+    }
+    footer {
+        background-color: #343a40 !important;
+        padding: 40px 20px;
+        font-size: 14px;
+        color: #212529;
+        border-top: 1px solid #ddd;
+        width: 100%;
+        /* Đảm bảo footer chiếm toàn bộ chiều rộng */
+        position: relative;
+    }
+    footer .container {
+        max-width: 100%;
+        /* Đảm bảo container của footer chiếm toàn bộ chiều rộng */
+        padding: 0;
+        /* Loại bỏ khoảng cách mặc định */
+    }
+    footer .row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 30px;
+    }
+    footer .col-md-2,
+    footer .col-md-4,
+    footer .col-6 {
+        flex: 1 1 200px;
+        /* Các cột sẽ có chiều rộng linh hoạt */
+    }
+    footer .fw-bold {
+        font-weight: bold;
+    }
+    footer a {
+        text-decoration: none;
+        color: #212529;
+    }
+    footer a:hover {
+        text-decoration: underline;
+    }
+    /* Điều chỉnh khoảng cách giữa các mục */
+    footer .d-flex {
+        gap: 20px;
+    }
+}
