@@ -471,7 +471,11 @@ function resize() {
   renderer.setSize(w, h, false);
   camera.aspect = w / h;
   if (w > 860) {
-    dist = 96; baseOffX = -w * 0.17; baseOffY = h * 0.05;
+    // desktop: centre the map in the space right of the copy/controls column and size it to fit
+    const col = document.querySelector('.panel'), edge = col.offsetLeft + col.offsetWidth + 24;
+    const avail = Math.max(w - edge, w * 0.4);
+    dist = 120 * Math.max(820 / avail, 580 / h, 0.8);
+    baseOffX = -((edge + w) / 2 - w / 2); baseOffY = h * 0.03;
   } else {
     // phones: fit the map into the gap between the buttons and the panel (layout positions, unaffected by transforms)
     const copy = document.querySelector('.hero-copy'), cta = copy.querySelector('.cta'), panel = document.querySelector('.panel');
