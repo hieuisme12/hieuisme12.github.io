@@ -253,9 +253,22 @@ canvas.addEventListener('pointermove', e => { if (!dragging) return; targetAz -=
 canvas.addEventListener('pointerup', () => { dragging = false; });
 canvas.addEventListener('pointercancel', () => { dragging = false; });
 
+let baseOffX = 0, baseOffY = 0;
 function placeCamera() {
-  camera.position.set(Math.cos(azimuth) * Math.cos(elevAngle) * dist, Math.sin(elevAngle) * dist, Math.sin(azimuth) * Math.cos(elevAngle) * dist);
+  const e = ease(smoothP);
+  const az = azimuth + e * 0.55, el = elevAngle + e * 0.62, d = dist * (1 + e * 0.5);
+  camera.position.set(Math.cos(az) * Math.cos(el) * d, Math.sin(el) * d, Math.sin(az) * Math.cos(el) * d);
   camera.lookAt(0, 0.6, 0);
+  if (renderer) {
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    camera.setViewOffset(w, h, baseOffX * (1 - e), baseOffY * (1 - e) + h * 0.13 * e, w, h);  // recentre, then lift above the rising page
+    camera.updateProjectionMatrix();
+  }
+  heroFade.forEach(el2 => {
+    if (!el2) return;
+    el2.style.opacity = String(clamp(1 - e * 1.8, 0, 1));
+    el2.style.transform = e > 0.001 ? `translate3d(0, ${(-e * 70).toFixed(1)}px, 0)` : '';
+  });
 }
 
 function resize() {
@@ -266,18 +279,39 @@ function resize() {
   camera.aspect = w / h;
   if (w > 860) {
     dist = 50;
-    camera.setViewOffset(w, h, -w * 0.24, h * 0.03, w, h);   // push the city to the right of the headline
+    baseOffX = -w * 0.24; baseOffY = h * 0.03;                 // push the city to the right of the headline
   } else {
     dist = 78;
-    camera.setViewOffset(w, h, 0, -h * 0.25, w, h);           // push it below the headline on phones
+    baseOffX = 0; baseOffY = -h * 0.25;                         // push it below the headline on phones
   }
-  scene.fog.near = dist + 6; scene.fog.far = dist + 50;
-  camera.updateProjectionMatrix();
+  scene.fog.near = dist + 6; scene.fog.far = dist + 60;
+  placeCamera();
 }
 
 /* ---------------- loop ---------------- */
-let visible = true;
-new IntersectionObserver(([e]) => { visible = e.isIntersecting; }, { threshold: 0 }).observe(canvas);
+/* ---------------- scroll choreography ----------------
+   Scrolling out of the hero lifts the camera into a top-down map view while the page
+   rises over the city like fog. Further down, the experience timeline is drawn like a route. */
+const nav = document.querySelector('.nav');
+const heroFade = [document.querySelector('.hero-copy'), document.querySelector('.panel')];
+const timeline = document.querySelector('.timeline');
+const stops = timeline ? [...timeline.children] : [];
+let scrollP = 0, smoothP = 0, visible = true;
+const ease = x => x * x * (3 - 2 * x);
+function onScroll() {
+  const vh = innerHeight;
+  scrollP = clamp(scrollY / (vh * 1.15), 0, 1);
+  visible = scrollY < vh * 2.2;
+  nav.classList.toggle('solid', scrollY > vh * 0.55);
+  if (timeline) {
+    const r = timeline.getBoundingClientRect(), line = vh * 0.62;
+    timeline.style.setProperty('--drawn', clamp((line - r.top) / r.height, 0, 1).toFixed(4));
+    stops.forEach(li => li.classList.toggle('reached', li.getBoundingClientRect().top + 10 < line));
+  }
+}
+addEventListener('scroll', onScroll, { passive: true });
+addEventListener('resize', onScroll);
+onScroll();
 
 const clock = new THREE.Clock();
 let carT = 0;
@@ -294,6 +328,7 @@ function frame() {
   }
   if (!dragging && !reduceMotion) targetAz += dt * 0.04;
   azimuth += (targetAz - azimuth) * 0.08;
+  smoothP += (scrollP - smoothP) * (reduceMotion ? 1 : 1 - Math.exp(-dt * 7));
   placeCamera();
 
   water.position.y = level + (reduceMotion ? 0 : Math.sin(time * 1.4) * 0.008);
