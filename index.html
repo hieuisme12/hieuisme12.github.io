@@ -82,6 +82,224 @@
     <h2 id="work-h"><span lang="en">Where I've worked</span><span lang="vi">Kinh nghiệm làm việc</span></h2>
     <ol class="timeline">
       <li>
+        <p class="when"><span lang="en">11/2026 – now</span><span lang="vi">11/2026 – nay</span></p>
+        <div>
+          <h3>SID <span class="at">@ SMARTLOG</span></h3>
+          <p><span lang="en">Building and delivering software solutions for logistics operations.</span><span lang="vi">Xây dựng và triển khai giải pháp phần mềm cho vận hành logistics.</span></p>
+        </div>
+      </li>
+      <li>
+        <p class="when">07/2025 – 06/2026</p>
+        <div>
+          <h3>Software Developer <span class="at">@ UNIT Corp</span></h3>
+          <ul class="bullets">
+            <li><strong>Econtract-Internal</strong> — <span lang="en">an internal e-contract platform for creating, approving and tracking contracts.</span><span lang="vi">nền tảng hợp đồng điện tử nội bộ: tạo, phê duyệt và theo dõi hợp đồng.</span></li>
+            <li><strong><span lang="en">Eximbank eForm Management System</span><span lang="vi">Hệ thống quản lý eForm Eximbank</span></strong> — <span lang="en">digital form management for a commercial bank.</span><span lang="vi">số hóa và quản lý biểu mẫu cho ngân hàng thương mại.</span></li>
+          </ul>
+        </div>
+      </li>
+      <li>
+        <p class="when">2021 – 2025</p>
+        <div>
+          <h3><span lang="en">Industrial University of Ho Chi Minh City</span><span lang="vi">Đại học Công nghiệp TP.HCM</span></h3>
+          <p><span lang="en">Engineer's degree in Software Engineering.</span><span lang="vi">Kỹ sư Kỹ thuật Phần mềm.</span></p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="research" id="research" aria-labelledby="research-h">
+    <div class="wrap research-grid">
+      <div>
+        <h2 id="research-h"><span lang="en">Published research</span><span lang="vi">Bài báo khoa học</span></h2>
+        <p class="venue">FIT IUH Scientific Conference (SSRC), Vol. 2, Issue 1, 2026</p>
+      </div>
+      <article class="paper">
+        <h3>
+          <span lang="en">Multimodal Flood Warning System: Combining IoT Sensor Networks and Crowdsourcing for Traffic Navigation</span>
+          <span lang="vi">Hệ thống cảnh báo ngập lụt đa phương thức: Kết hợp mạng cảm biến IoT và Crowdsourcing phục vụ điều hướng giao thông</span>
+        </h3>
+        <p class="authors">Triệu Minh Nguyễn, <strong>Lâm Trung Hiếu</strong></p>
+        <dl class="layers">
+          <div>
+            <dt><span lang="en">Sense</span><span lang="vi">Cảm biến</span></dt>
+            <dd><span lang="en">ESP32 nodes and LoRa gateways measure water levels where cellular coverage is weak, reporting over MQTT.</span><span lang="vi">Nút ESP32 và gateway LoRa đo mực nước ở nơi sóng di động yếu, gửi dữ liệu qua MQTT.</span></dd>
+          </div>
+          <div>
+            <dt><span lang="en">Verify</span><span lang="vi">Xác thực</span></dt>
+            <dd><span lang="en">An event-driven backend checks citizen reports against nearby sensors in PostGIS and filters out fake ones.</span><span lang="vi">Backend hướng sự kiện đối chiếu báo cáo của người dân với cảm biến gần đó bằng PostGIS và lọc báo cáo giả.</span></dd>
+          </div>
+          <div>
+            <dt><span lang="en">Route</span><span lang="vi">Định tuyến</span></dt>
+            <dd><span lang="en">Flood-aware bidirectional A* with flood penalties, road-type weights and time-decayed crowd data, computed in microseconds.</span><span lang="vi">A* hai chiều có xét ngập: phạt theo mức ngập, trọng số loại đường và dữ liệu cộng đồng suy giảm theo thời gian, tính trong vài micro giây.</span></dd>
+          </div>
+        </dl>
+        <a class="btn primary" href="https://ssrc.fit.iuh.edu.vn/conf/article/view/276" target="_blank" rel="noopener"><span lang="en">Read the paper</span><span lang="vi">Đọc bài báo</span></a>
+      </article>
+    </div>
+  </section>
+
+  <section class="projects wrap" id="projects" aria-labelledby="projects-h">
+    <h2 id="projects-h"><span lang="en">Things I've built</span><span lang="vi">Dự án tiêu biểu</span></h2>
+
+    <article class="feature">
+      <div class="feature-text">
+        <h3>FloodSight</h3>
+        <p><span lang="en">My graduation thesis. A real-time flood map of Ho Chi Minh City with community reports, a safe-route finder, emergency alerts by area, a chatbot, and an Expo mobile app in the same monorepo. Comes with a separate moderation portal.</span><span lang="vi">Khóa luận tốt nghiệp. Bản đồ ngập realtime TP.HCM với báo cáo cộng đồng, tìm đường an toàn, cảnh báo khẩn theo khu vực, chatbot và ứng dụng mobile Expo trong cùng monorepo. Kèm cổng kiểm duyệt riêng cho admin.</span></p>
+        <p class="stack">React, Vite, Mapbox GL, Expo, Tailwind, i18next</p>
+        <div class="links">
+          <a href="https://kltn-007-flood-watch-fe.vercel.app" target="_blank" rel="noopener"><span lang="en">Live app</span><span lang="vi">Xem bản chạy</span></a>
+          <a href="https://kltn-007-flood-watch-admin-fe.vercel.app" target="_blank" rel="noopener"><span lang="en">Admin portal</span><span lang="vi">Trang quản trị</span></a>
+          <a href="https://github.com/hieuisme12/KLTN-007-FloodWatch-FE" target="_blank" rel="noopener"><span lang="en">Source</span><span lang="vi">Mã nguồn</span></a>
+        </div>
+      </div>
+      <ul class="modules">
+        <li><span lang="en">Live flood map from sensors and reports</span><span lang="vi">Bản đồ ngập realtime từ cảm biến và báo cáo</span></li>
+        <li><span lang="en">Community reports with photo upload</span><span lang="vi">Báo cáo cộng đồng kèm ảnh</span></li>
+        <li><span lang="en">Safe-route finder that avoids flooding</span><span lang="vi">Tìm đường an toàn tránh ngập</span></li>
+        <li><span lang="en">Emergency alerts by area</span><span lang="vi">Cảnh báo khẩn theo khu vực</span></li>
+        <li><span lang="en">Moderation portal for admins</span><span lang="vi">Cổng kiểm duyệt cho admin</span></li>
+        <li><span lang="en">Expo mobile app, Vietnamese and English</span><span lang="vi">App mobile Expo, tiếng Việt và tiếng Anh</span></li>
+      </ul>
+    </article>
+
+    <ul class="project-list">
+      <li>
+        <h3><a href="https://github.com/hieuisme12/clinic-management-backend" target="_blank" rel="noopener"><span lang="en">Clinic management API</span><span lang="vi">API quản lý phòng khám</span></a></h3>
+        <p><span lang="en">REST API for patients, medical records, medicines and prescriptions, with authenticated roles.</span><span lang="vi">REST API cho bệnh nhân, hồ sơ bệnh án, thuốc và đơn thuốc, có phân quyền đăng nhập.</span></p>
+        <p class="stack">Java, Spring Boot, Spring Security, PostgreSQL</p>
+      </li>
+      <li>
+        <h3><a href="https://github.com/hieuisme12/medical-clinic-management-frontend" target="_blank" rel="noopener"><span lang="en">Clinic management web</span><span lang="vi">Web quản lý phòng khám</span></a></h3>
+        <p><span lang="en">The frontend for doctors and administrators: patient search, prescriptions, medicine stock, users.</span><span lang="vi">Giao diện cho bác sĩ và quản trị viên: tìm bệnh nhân, kê đơn, quản lý thuốc và người dùng.</span></p>
+        <p class="stack">React 19, Ant Design, Vite</p>
+      </li>
+      <li>
+        <h3><a href="https://github.com/hieuisme12/ShopAdam" target="_blank" rel="noopener">ShopAdam</a></h3>
+        <p><span lang="en">An e-commerce storefront and admin dashboard with VNPay checkout and Google Maps.</span><span lang="vi">Website bán hàng kèm trang quản trị, thanh toán VNPay và Google Maps.</span></p>
+        <p class="stack">React, Redux Toolkit, MUI</p>
+      </li>
+      <li>
+        <h3><a href="https://github.com/hieuisme12/BaiTapLonReact" target="_blank" rel="noopener">FoodD</a></h3>
+        <p><span lang="en">A food ordering mobile app with its own backend.</span><span lang="vi">Ứng dụng đặt đồ ăn trên di động, có backend riêng.</span></p>
+        <p class="stack">React Native, Expo, Express, MongoDB</p>
+      </li>
+    </ul>
+  </section>
+
+  <section class="skills wrap" aria-labelledby="skills-h">
+    <h2 id="skills-h"><span lang="en">What I work with</span><span lang="vi">Công nghệ sử dụng</span></h2>
+    <dl class="skill-groups">
+      <div><dt>Frontend</dt><dd>React, Vite, JavaScript, TypeScript, Tailwind CSS, Redux Toolkit, MUI, Ant Design, PrimeReact</dd></div>
+      <div><dt>Backend</dt><dd>Java, Spring Boot, Spring Security, Spring Data JPA, Node.js, REST APIs</dd></div>
+      <div><dt><span lang="en">Data and maps</span><span lang="vi">Dữ liệu và bản đồ</span></dt><dd>PostgreSQL, PostGIS, MySQL, Mapbox GL, Leaflet</dd></div>
+      <div><dt>Mobile &amp; IoT</dt><dd>React Native, Expo, Capacitor, ESP32, LoRa, MQTT</dd></div>
+      <div><dt><span lang="en">Tools</span><span lang="vi">Công cụ</span></dt><dd>Git, GitHub, Vercel, Maven, Docker</dd></div>
+    </dl>
+  </section>
+
+  <section class="contact" id="contact" aria-labelledby="contact-h">
+    <div class="wrap">
+      <h2 id="contact-h"><span lang="en">Let's build something useful</span><span lang="vi">Cùng làm điều gì đó hữu ích nhé</span></h2>
+      <p><span lang="en">The best way to reach me is through GitHub.</span><span lang="vi">Cách nhanh nhất để liên hệ mình là qua GitHub.</span></p>
+      <div class="cta">
+        <a class="btn primary" href="https://github.com/hieuisme12" target="_blank" rel="noopener">github.com/hieuisme12</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap foot">
+  <p>© 2026 Lâm Trung Hiếu. <span lang="en">Built with Three.js, hosted on GitHub Pages.</span><span lang="vi">Làm bằng Three.js, chạy trên GitHub Pages.</span></p>
+</footer>
+
+<script type="module" src="main.js"></script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lâm Trung Hiếu — Software Engineer</title>
+<meta name="description" content="Lâm Trung Hiếu, Software Engineer in Ho Chi Minh City. React, Spring Boot, PostgreSQL, and flood-aware routing research.">
+<meta property="og:title" content="Lâm Trung Hiếu — Software Engineer">
+<meta property="og:description" content="Web apps end to end, and a city that routes around its floods.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%2313293D'/><path d='M6 22h6v-6h8v-6h6' stroke='%23F08A24' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <a class="brand" href="#top" aria-label="Lâm Trung Hiếu, home">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 22h6v-6h8v-6h6" /></svg>
+    <span>hieuisme12</span>
+  </a>
+  <nav aria-label="Sections">
+    <a href="#work"><span lang="en">Work</span><span lang="vi">Kinh nghiệm</span></a>
+    <a href="#research"><span lang="en">Research</span><span lang="vi">Nghiên cứu</span></a>
+    <a href="#projects"><span lang="en">Projects</span><span lang="vi">Dự án</span></a>
+    <a href="#contact"><span lang="en">Contact</span><span lang="vi">Liên hệ</span></a>
+  </nav>
+  <div class="lang" role="group" aria-label="Language">
+    <button type="button" data-set-lang="en" aria-pressed="true">EN</button>
+    <button type="button" data-set-lang="vi" aria-pressed="false">VI</button>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero" id="top">
+    <canvas id="city" aria-label="3D model of a city district. Water rises and falls, and the orange line is a safe route recalculated around flooded streets."></canvas>
+
+    <div class="hero-copy">
+      <p class="hello"><span lang="en">Hi, I'm</span><span lang="vi">Xin chào, mình là</span></p>
+      <h1>Lâm Trung&nbsp;Hiếu</h1>
+      <p class="role">
+        <span lang="en">Software Engineer in Ho Chi Minh City. I build web apps end to end, and I taught a city map to route people around its floods.</span>
+        <span lang="vi">Kỹ sư phần mềm tại TP.HCM. Mình xây dựng ứng dụng web từ giao diện đến backend, và đã dạy bản đồ thành phố tự tìm đường tránh ngập.</span>
+      </p>
+      <div class="cta">
+        <a class="btn primary" href="#projects"><span lang="en">See my projects</span><span lang="vi">Xem dự án</span></a>
+        <a class="btn" href="https://github.com/hieuisme12" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+
+    <aside class="panel" aria-labelledby="panel-title">
+      <p class="panel-title" id="panel-title">
+        <span lang="en">Try it: raise the water</span><span lang="vi">Thử nhé: kéo cho nước dâng</span>
+      </p>
+      <label class="slider">
+        <span class="sr"><span lang="en">Water level</span><span lang="vi">Mực nước</span></span>
+        <input type="range" id="level" min="0" max="100" value="30">
+      </label>
+      <dl class="readout">
+        <div><dt><span lang="en">Water level</span><span lang="vi">Mực nước</span></dt><dd id="r-level">0.30 m</dd></div>
+        <div><dt><span lang="en">Flooded sensors</span><span lang="vi">Cảm biến báo ngập</span></dt><dd id="r-sensors">0 / 8</dd></div>
+        <div><dt><span lang="en">Safe route</span><span lang="vi">Tuyến an toàn</span></dt><dd id="r-route">—</dd></div>
+      </dl>
+      <p class="panel-note">
+        <span lang="en">The orange line is an A* route that avoids flooded streets, the idea behind my thesis.</span>
+        <span lang="vi">Đường màu cam là tuyến A* né các con đường bị ngập, ý tưởng chính trong khóa luận của mình.</span>
+      </p>
+    </aside>
+  </section>
+
+  <section class="about wrap" aria-labelledby="about-h">
+    <h2 id="about-h" class="sr"><span lang="en">About</span><span lang="vi">Giới thiệu</span></h2>
+    <p class="lede">
+      <span lang="en">I work across the stack: React and Vite interfaces, Spring Boot and Node services, PostgreSQL with PostGIS when the data has coordinates. I've shipped internal tools for enterprise and banking clients, and I enjoy turning messy real-world signals into something people can act on.</span>
+      <span lang="vi">Mình làm việc trên toàn bộ stack: giao diện React và Vite, dịch vụ Spring Boot và Node, PostgreSQL kèm PostGIS khi dữ liệu có tọa độ. Mình đã làm các hệ thống nội bộ cho doanh nghiệp và ngân hàng, và thích biến dữ liệu thực tế lộn xộn thành thứ con người có thể dùng ngay.</span>
+    </p>
+  </section>
+
+  <section class="work wrap" id="work" aria-labelledby="work-h">
+    <h2 id="work-h"><span lang="en">Where I've worked</span><span lang="vi">Kinh nghiệm làm việc</span></h2>
+    <ol class="timeline">
+      <li>
         <p class="when"><span lang="en">Now</span><span lang="vi">Hiện tại</span></p>
         <div>
           <h3>SID <span class="at">@ SMARTLOG</span></h3>
