@@ -4,8 +4,8 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.m
 const root = document.documentElement;
 function store(k, v) { try { v === undefined ? (v = localStorage.getItem(k)) : localStorage.setItem(k, v); return v; } catch { return null; } }
 const T = {
-  en: { km: 'km', via: 'via', none: 'No safe route', blocked: 'blocked', cm: 'cm' },
-  vi: { km: 'km', via: 'qua', none: 'Không có tuyến an toàn', blocked: 'chặn', cm: 'cm' },
+  en: { none: 'No safe route', same: 'Pick two different places' },
+  vi: { none: 'Không có tuyến an toàn', same: 'Chọn hai điểm khác nhau' },
 };
 const t = k => T[root.dataset.lang === 'vi' ? 'vi' : 'en'][k];
 function setLang(lang) {
@@ -13,6 +13,7 @@ function setLang(lang) {
   root.lang = lang;
   document.querySelectorAll('[data-set-lang]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.setLang === lang)));
   store('lang', lang);
+  if (selFrom) { fillSelects(); startLabel.el.textContent = placeName(start); goalLabel.el.textContent = placeName(goal); startLabel.w = goalLabel.w = 0; }
   refreshPanel();
 }
 document.querySelectorAll('[data-set-lang]').forEach(b => b.addEventListener('click', () => setLang(b.dataset.setLang)));
@@ -28,7 +29,7 @@ const P = {
   E: [10.7893, 106.6925], F: [10.7912, 106.6972], G: [10.8015, 106.7110], L: [10.8060, 106.7135],
   M: [10.8045, 106.7195], K: [10.7950, 106.7208], H: [10.7985, 106.7215], I: [10.8008, 106.7282],
   J: [10.8035, 106.7335], TD: [10.8052, 106.7368], AP: [10.8030, 106.7480], TE: [10.7728, 106.7178],
-  BTM: [10.8035, 106.6985], TT: [10.7560, 106.7210], Q7: [10.7390, 106.7292],
+  BTM: [10.8035, 106.6985], TT: [10.7560, 106.7210], Q7: [10.7390, 106.7292], TDI: [10.7918, 106.6893],
 };
 const ROADS = [
   { n: 'Nguyễn Hữu Cảnh', c: 1, p: ['BS', [10.7892, 106.7098], [10.7925, 106.7158], 'K', 'H'], flood: 0 },
@@ -45,7 +46,7 @@ const ROADS = [
   { n: 'Lê Lợi', c: 0, p: ['BT', 'OP'] },
   { n: 'Hàm Nghi', c: 0, p: ['BT', 'HN', 'WH'] },
   { n: 'Tôn Đức Thắng', c: 1, p: ['TN', 'WH', 'BS'] },
-  { n: 'Hai Bà Trưng', c: 0, p: ['OP', 'HB', 'E', [10.7918, 106.6893]] },
+  { n: 'Hai Bà Trưng', c: 0, p: ['OP', 'HB', 'E', 'TDI'] },
   { n: 'Nam Kỳ Khởi Nghĩa', c: 0, p: ['HN', 'DL', [10.7850, 106.6880], [10.7905, 106.6828]] },
   { n: 'Cách Mạng Tháng Tám', c: 1, p: ['BT', [10.7790, 106.6880], [10.7860, 106.6780], [10.7905, 106.6722]] },
   { n: 'Võ Văn Kiệt', c: 1, p: ['TN', 'KH', 'CA', [10.7642, 106.6920], [10.7588, 106.6800], [10.7560, 106.6718]] },
@@ -68,7 +69,16 @@ const WATER = [
   { w: 0.5, p: [[10.7684, 106.7108], [10.7666, 106.7020], [10.7632, 106.6915], [10.7576, 106.6790], [10.7546, 106.6705]] },
   { w: 0.5, p: [[10.7566, 106.7232], [10.7534, 106.7120], [10.7524, 106.7000], [10.7530, 106.6880], [10.7546, 106.6765]] },
 ];
-const START = 'BT', GOAL = 'TD';
+// places a visitor can pick as origin or destination (all are routing-graph nodes)
+const PLACES = {
+  BT: ['Chợ Bến Thành', 'Ben Thanh Market'], NT: ['Nhà thờ Đức Bà', 'Notre-Dame Cathedral'], DL: ['Dinh Độc Lập', 'Independence Palace'],
+  OP: ['Nhà hát Thành phố', 'Saigon Opera House'], TDI: ['Tân Định', 'Tan Dinh'], BS: ['Ba Son', 'Ba Son'],
+  K: ['Landmark 81', 'Landmark 81'], G: ['Ngã tư Hàng Xanh', 'Hang Xanh junction'], BTM: ['Chợ Bà Chiểu', 'Ba Chieu Market'],
+  TD: ['Thảo Điền', 'Thao Dien'], AP: ['An Phú', 'An Phu'], TE: ['Thủ Thiêm', 'Thu Thiem'],
+  TT: ['Cầu Tân Thuận', 'Tan Thuan Bridge'], Q7: ['Quận 7', 'District 7'],
+};
+const placeName = k => PLACES[k][root.dataset.lang === 'vi' ? 0 : 1];
+let start = 'BT', goal = 'TD';
 const BLOCK_AT = 15;               // cm of water on a street at which the router treats it as impassable
 const LEVELS = [                   // FloodSight's 5-step scale
   { cm: 10, c: 0x4CAF50 }, { cm: 20, c: 0x8BC34A }, { cm: 30, c: 0xFFC107 }, { cm: 40, c: 0xFF9800 }, { cm: Infinity, c: 0xF44336 },
@@ -103,13 +113,14 @@ ROADS.forEach((r, ri) => {
 const depthOf = (r, water) => (r.flood == null ? 0 : Math.max(0, water - r.flood));
 
 function route(water) {
-  const [gx, gz] = nodePos.get(GOAL);
+  if (start === goal) return null;
+  const [gx, gz] = nodePos.get(goal);
   const h = k => { const [x, z] = nodePos.get(k); return Math.hypot(gx - x, gz - z); };
-  const g = new Map([[START, 0]]), came = new Map(), open = new Set([START]), f = new Map([[START, h(START)]]);
+  const g = new Map([[start, 0]]), came = new Map(), open = new Set([start]), f = new Map([[start, h(start)]]);
   while (open.size) {
     let cur = null;
     for (const k of open) if (cur === null || f.get(k) < f.get(cur)) cur = k;
-    if (cur === GOAL) {
+    if (cur === goal) {
       const path = [{ key: cur }];
       for (let k = cur; came.has(k);) { const c = came.get(k); path[0].ri = c.ri; path.unshift({ key: c.from }); k = c.from; }
       return path;                                   // each step after the first carries the street it arrived on
@@ -275,13 +286,21 @@ ROADS.filter(r => r.flood != null).forEach(r => {
 });
 
 // start / goal
-function pin(key, color) {
-  const [x, z] = nodePos.get(key);
-  const m = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.34, 0.16, 28), new THREE.MeshStandardMaterial({ color }));
-  m.position.set(x, 0.1, z); city.add(m);
-  return new THREE.Vector3(x, 0.4, z);
+// every pickable place gets a small ring; origin and destination get solid pins that move
+const ringGeo = new THREE.RingGeometry(0.2, 0.3, 24), ringMat = new THREE.MeshBasicMaterial({ color: C.ink, side: THREE.DoubleSide });
+for (const k in PLACES) { const [x, z] = nodePos.get(k); const r = new THREE.Mesh(ringGeo, ringMat); r.rotation.x = -Math.PI / 2; r.position.set(x, 0.07, z); city.add(r); }
+function pin(color) {
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.36, 0.18, 28), new THREE.MeshStandardMaterial({ color }));
+  city.add(m); return m;
 }
-const startPos = pin(START, C.ink), goalPos = pin(GOAL, C.route);
+const startPin = pin(C.ink), goalPin = pin(C.route);
+const startPos = new THREE.Vector3(), goalPos = new THREE.Vector3();
+function placePins() {
+  const [sx, sz] = nodePos.get(start), [gx, gz] = nodePos.get(goal);
+  startPin.position.set(sx, 0.1, sz); goalPin.position.set(gx, 0.1, gz);
+  startPos.set(sx, 0.4, sz); goalPos.set(gx, 0.4, gz);
+}
+placePins();
 
 // route
 const routeMat = new THREE.MeshStandardMaterial({ color: C.route, emissive: C.route, emissiveIntensity: 0.5, roughness: 0.4 });
@@ -308,16 +327,31 @@ function addLabel(pos, html, cls) {
   const l = { pos, el, on: true, prio: { pin: 100, place: 50, water: 40 }[(cls || '').split(' ')[0]] || 0 }; labels.push(l); return l;
 }
 const at = (lat, lon, y = 0.4) => { const [x, z] = proj([lat, lon]); return new THREE.Vector3(x, y, z); };
-addLabel(startPos, 'Bến Thành', 'pin');
-addLabel(goalPos, 'Thảo Điền', 'pin goal');
+const startLabel = addLabel(startPos, '', 'pin'), goalLabel = addLabel(goalPos, '', 'pin goal');
 addLabel(lm81, 'Landmark 81', 'place');
-addLabel(at(10.7795, 106.7255), 'Thủ Thiêm', 'place');
 addLabel(at(10.7825, 106.7098, 0.1), '<span lang="vi">Sông Sài Gòn</span><span lang="en">Saigon River</span>', 'water');
 ROADS.filter(r => r.flood != null).forEach(r => { r.label = addLabel(r.anchor, '', 'flood'); });
 
 /* ================= state + panel ================= */
 const slider = document.getElementById('level');
 const out = { level: document.getElementById('r-level'), dist: document.getElementById('r-dist'), via: document.getElementById('r-via'), flooded: document.getElementById('r-flooded') };
+const selFrom = document.getElementById('from'), selTo = document.getElementById('to');
+function fillSelects() {
+  for (const [sel, val] of [[selFrom, start], [selTo, goal]]) {
+    sel.innerHTML = '';
+    for (const k in PLACES) { const o = document.createElement('option'); o.value = k; o.textContent = placeName(k); sel.appendChild(o); }
+    sel.value = val;
+  }
+}
+function setEnds(s, g) {
+  start = s; goal = g; selFrom.value = s; selTo.value = g;
+  startLabel.el.textContent = placeName(s); goalLabel.el.textContent = placeName(g);
+  startLabel.w = goalLabel.w = 0;
+  placePins(); lastWater = -1; currentPath = undefined; applyWater();
+}
+selFrom.addEventListener('change', () => setEnds(selFrom.value, goal));
+selTo.addEventListener('change', () => setEnds(start, selTo.value));
+document.getElementById('swap').addEventListener('click', () => setEnds(goal, start));
 let water = +slider.value, lastWater = -1, userTouched = false, currentPath = null;
 
 function refreshPanel() {
@@ -326,7 +360,7 @@ function refreshPanel() {
   const flooded = ROADS.filter(r => depthOf(r, water) > 0);
   out.flooded.textContent = String(new Set(flooded.map(r => r.n)).size);
   if (!currentPath) {
-    out.dist.textContent = t('none'); out.dist.classList.add('bad'); out.via.textContent = '—';
+    out.dist.textContent = start === goal ? t('same') : t('none'); out.dist.classList.add('bad'); out.via.textContent = '—';
     return;
   }
   out.dist.classList.remove('bad');
@@ -379,9 +413,21 @@ slider.addEventListener('input', () => { userTouched = true; water = +slider.val
 /* ================= camera, drag, scroll choreography ================= */
 let azimuth = Math.PI * 0.32, targetAz = azimuth, elevAngle = 0.78, dist = 82;
 let dragging = false, lastX = 0;
-canvas.addEventListener('pointerdown', e => { dragging = true; lastX = e.clientX; canvas.setPointerCapture(e.pointerId); });
+let downX = 0, downY = 0;
+canvas.addEventListener('pointerdown', e => { dragging = true; lastX = downX = e.clientX; downY = e.clientY; canvas.setPointerCapture(e.pointerId); });
 canvas.addEventListener('pointermove', e => { if (!dragging) return; targetAz -= (e.clientX - lastX) * 0.006; lastX = e.clientX; });
-canvas.addEventListener('pointerup', () => { dragging = false; });
+// a click or tap (not a drag) sets the destination to the nearest place
+const ray = new THREE.Raycaster(), ground = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), hit = new THREE.Vector3();
+canvas.addEventListener('pointerup', e => {
+  dragging = false;
+  if (Math.hypot(e.clientX - downX, e.clientY - downY) > 6 || smoothP > 0.2) return;
+  const r = canvas.getBoundingClientRect();
+  ray.setFromCamera(new THREE.Vector2(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1), camera);
+  if (!ray.ray.intersectPlane(ground, hit)) return;
+  let best = null, bd = 3.2;
+  for (const k in PLACES) { const [x, z] = nodePos.get(k), d = Math.hypot(x - hit.x, z - hit.z); if (d < bd) { bd = d; best = k; } }
+  if (best && best !== start) setEnds(start, best);
+});
 canvas.addEventListener('pointercancel', () => { dragging = false; });
 
 const nav = document.querySelector('.nav');
@@ -490,6 +536,6 @@ if (renderer) {
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   addEventListener('resize', resize);
   resize();
-  applyWater();
+  setEnds(start, goal);
   frame();
 }
