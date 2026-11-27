@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%2313293D'/><path d='M6 22h6v-6h8v-6h6' stroke='%23F08A24' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
-<link rel="stylesheet" href="style.css?v=5">
+<link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
 <a class="skip" href="#main"><span lang="en">Skip to content</span><span lang="vi">Chuyển đến nội dung</span></a>
@@ -35,7 +35,7 @@
 
 <main id="main">
   <section class="hero" id="top">
-    <canvas id="city" aria-label="3D schematic of central Ho Chi Minh City. Flood-prone streets fill with water as the level rises, and the orange line is the safe route from Ben Thanh to Thao Dien."></canvas>
+    <canvas id="city" aria-label="3D schematic of central Ho Chi Minh City. Flood-prone streets fill with water as the level rises, and the orange line is the safe route between the chosen places."></canvas>
     <div id="labels" aria-hidden="true"></div>
 
     <div class="hero-copy">
@@ -55,8 +55,13 @@
         <span class="v" id="r-level">20 cm</span>
         <input type="range" id="level" min="0" max="60" value="20">
       </label>
+      <div class="od">
+        <label><span class="k"><span lang="en">From</span><span lang="vi">Điểm đi</span></span><select id="from"></select></label>
+        <button type="button" id="swap" aria-label="Swap origin and destination" title="⇄">⇅</button>
+        <label><span class="k"><span lang="en">To</span><span lang="vi">Điểm đến</span></span><select id="to"></select></label>
+      </div>
+      <p class="hint"><span lang="en">Or click the map to set the destination.</span><span lang="vi">Hoặc chạm vào bản đồ để chọn điểm đến.</span></p>
       <dl class="readout">
-        <div><dt><span lang="en">Route</span><span lang="vi">Lộ trình</span></dt><dd>Bến Thành → Thảo Điền</dd></div>
         <div><dt><span lang="en">Distance</span><span lang="vi">Quãng đường</span></dt><dd id="r-dist">—</dd></div>
         <div><dt><span lang="en">Via</span><span lang="vi">Đi qua</span></dt><dd id="r-via">—</dd></div>
         <div><dt><span lang="en">Flooded streets</span><span lang="vi">Tuyến đường ngập</span></dt><dd id="r-flooded">0</dd></div>
@@ -182,6 +187,6 @@
   <p>© 2026 Lâm Trung Hiếu · Three.js · GitHub Pages</p>
 </footer>
 
-<script type="module" src="main.js?v=5"></script>
+<script type="module" src="main.js?v=6"></script>
 </body>
 </html>
