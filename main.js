@@ -281,10 +281,14 @@ function resize() {
     dist = 50;
     baseOffX = -w * 0.24; baseOffY = h * 0.03;                 // push the city to the right of the headline
   } else {
-    dist = 78;
-    baseOffX = 0; baseOffY = -h * 0.25;                         // push it below the headline on phones
+    // phones: fit the city into the gap between the buttons and the panel (layout positions, unaffected by transforms)
+    const copy = document.querySelector('.hero-copy'), cta = copy.querySelector('.cta'), panel = document.querySelector('.panel');
+    const top = copy.offsetTop + cta.offsetTop + cta.offsetHeight, bottom = Math.min(panel.offsetTop, h);
+    const gap = Math.max(bottom - top, h * 0.25);
+    dist = 100 * clamp((h * 0.42) / gap, 0.9, 1.7);
+    baseOffX = 0; baseOffY = h / 2 - (top + bottom) / 2;
   }
-  scene.fog.near = dist + 6; scene.fog.far = dist + 60;
+  scene.fog.near = dist * 1.3; scene.fog.far = dist * 1.6 + 45;
   placeCamera();
 }
 
